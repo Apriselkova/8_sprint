@@ -46,7 +46,6 @@ func (s ParcelStore) Get(number int) (Parcel, error) {
 
 	// Заполняем объект Parcel данными из таблицы
 	p.Number = number // Устанавливаем номер посылки
-
 	return p, nil
 }
 
