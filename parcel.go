@@ -30,29 +30,22 @@ func (s ParcelStore) Add(p Parcel) (int, error) {
 }
 
 func (s ParcelStore) Get(number int) (Parcel, error) {
-	var client int
-	var status, address, createdAt string
+	// Объявляем переменную p
+	var p Parcel
 
-	row := s.db.QueryRow("SELECT client, status, address, created_at FROM parcel WHERE number = ?", number)
+	row := s.db.QueryRow("SELECT number, client, status, address, created_at FROM parcel WHERE number = ?", number)
 
-	// Сканируем результат запроса в переменные
-	err := row.Scan(&client, &status, &address, &createdAt)
+	// Сканируем результат запроса
+	err := row.Scan(&p.Number, &p.Client, &p.Status, &p.Address, &p.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return Parcel{}, fmt.Errorf("посылка с номером %d не найдена", number)
 		}
-		return Parcel{}, fmt.Errorf("ошибка при получении посылки: %v", err)
+		return Parcel{}, fmt.Errorf("ошибка при получении посылки: %w", err)
 	}
 
 	// Заполняем объект Parcel данными из таблицы
-	p := Parcel{
-		Number:    number,
-		Client:    client,
-		Status:    status,
-		Address:   address,
-		CreatedAt: createdAt,
-	}
-
+	p.Number = number // Устанавливаем номер посылки
 	return p, nil
 }
 
