@@ -51,9 +51,7 @@ func TestAddGetDelete(t *testing.T) {
 	// get
 	retrievedParcel, err := store.Get(id)
 	require.NoError(t, err)
-	require.Equal(t, parcel.Client, retrievedParcel.Client)
-	require.Equal(t, parcel.Status, retrievedParcel.Status)
-	require.Equal(t, parcel.Address, retrievedParcel.Address)
+	require.Equal(t, parcel, retrievedParcel)
 
 	// delete
 	err = store.Delete(id)
@@ -94,9 +92,7 @@ func TestSetAddress(t *testing.T) {
 func TestSetStatus(t *testing.T) {
 	// prepare
 	db, err := sql.Open("sqlite", "demo.db")
-	if err != nil {
-		require.NoError(t, err)
-	}
+	require.NoError(t, err)
 	defer db.Close()
 
 	_, err = db.Exec("CREATE TABLE parcel (number INTEGER PRIMARY KEY AUTOINCREMENT, client INTEGER, status TEXT, address TEXT, created_at TEXT)")
@@ -118,7 +114,7 @@ func TestSetStatus(t *testing.T) {
 	// check
 	retrievedParcel, err := store.Get(id)
 	require.NoError(t, err)
-	require.Equal(t, newStatus, retrievedParcel.Status)
+	require.Equal(t, newStatus, retrievedParcel)
 }
 
 // TestGetByClient проверяет получение посылок по идентификатору клиента
@@ -167,8 +163,6 @@ func TestGetByClient(t *testing.T) {
 	// check
 	for _, parcel := range storedParcels {
 		require.Contains(t, parcelMap, parcel.Number)
-		require.Equal(t, parcelMap[parcel.Number].Client, parcel.Client)
-		require.Equal(t, parcelMap[parcel.Number].Status, parcel.Status)
-		require.Equal(t, parcelMap[parcel.Number].Address, parcel.Address)
+		require.Equal(t, parcelMap[parcel.Number], parcel)
 	}
 }
